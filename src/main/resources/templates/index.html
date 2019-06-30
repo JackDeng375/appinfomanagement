@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>App管理系统</title>
 </head>
 <body>
-<a href="">后台管理系统入口</a>
-<a href="">开发者平台入口</a>
+<a href="/backend/index" th:href="@{/backend/index}">后台管理系统入口</a><br>
+<a href="/dev/index" th:href="@{/dev/index}">开发者平台入口</a>
 </body>
 </html>
