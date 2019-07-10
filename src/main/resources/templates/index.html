@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>App管理系统</title>
+    <link th:href="@{/layui/css/layui.css}" href="../static/layui/css/layui.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<a href="/backend/index" th:href="@{/backend/index}">后台管理系统入口</a><br>
-<a href="/dev/index" th:href="@{/dev/index}">开发者平台入口</a>
+<!--<a href="/backend/index" th:href="@{/backend/index}"></a><br>-->
+<!--<a href="/dev/toLogin" th:href="@{/dev/toLogin}"></a>-->
+<div class="layui-container">
+    <a href="/backend/index" th:href="@{/backend/index}" class="layui-btn">后台管理系统入口</a>
+    <a href="/dev/toLogin" th:href="@{/dev/toLogin}" class="layui-btn">开发者平台入口</a>
+</div>
 </body>
 </html>
