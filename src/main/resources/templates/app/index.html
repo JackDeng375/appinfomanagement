@@ -13,7 +13,105 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>搜索APP</legend>
+            </fieldset>
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">单行输入框</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">APP状态</label>
+                        <div class="layui-input-inline">
+                            <select name="interest" lay-filter="aihao">
+                                <option value=""></option>
+                                <option th:each="status:${statusList}" th:value="${status.id}" th:text="${status.valueName}"></option>
+                            </select>
+                        </div>
+                    </div>
 
+                    <div class="layui-inline">
+                        <label class="layui-form-label">所属平台</label>
+                        <div class="layui-input-inline">
+                            <select name="interest" lay-filter="aihao">
+                                <option value=""></option>
+                                <option th:each="flatform:${flatformList}" th:value="${flatform.id}" th:text="${flatform.valueName}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">一级菜单</label>
+                        <div class="layui-input-inline">
+                            <select lay-filter="levelC1" name="levelC1">
+                                <option value=""></option>
+                                <option th:each="lv:${oneMenuList}" th:value="${lv.id}" th:text="${lv.categoryName}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">二级菜单</label>
+                        <div class="layui-input-inline">
+                            <select lay-filter="levelC2" name="levelC2">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">三级菜单</label>
+                        <div class="layui-input-inline">
+                            <select lay-filter="levelC3" name="levelC3">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+
+            <table class="layui-table">
+                <thead>
+                    <th>软件名称</th>
+                    <th>APK名称</th>
+                    <th>软件大小（单位M）</th>
+                    <th>所属平台</th>
+                    <th>所属分类（一级分类、二级分类、三级分类）</th>
+                    <th>状态</th>
+                    <th>下载次数</th>
+                    <th>最新版本号</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                    <tr th:each="obj:${page.list}">
+                        <td th:text="${obj.softwareName}"></td>
+                        <td th:text="${obj.APKName}"></td>
+                        <td th:text="${obj.softwareSize}"></td>
+                        <td>
+                            <span th:if="${obj.flatformId == 1}">手机</span>
+                            <span th:if="${obj.flatformId == 2}">平板</span>
+                            <span th:if="${obj.flatformId == 3}">通用</span>
+                        </td>
+                        <td>
+                            <span th:text="${obj.categoryLevel1.categoryName}"></span>->
+                            <span th:text="${obj.categoryLevel2.categoryName}"></span>->
+                            <span th:text="${obj.categoryLevel3.categoryName}"></span>
+                        </td>
+                        <td th:text="${obj.status}"></td>
+                        <td th:text="${obj.downloads}"></td>
+                        <td th:text="${obj.newAppVersion?.versionNo}"></td>
+                        <td><button>点击操作</button></td>
+                    </tr>
+
+                    <!--TODO: 分页界面-->
+                </tbody>
+            </table>
 
         </div>
     </div>
@@ -22,8 +120,28 @@
 <script src="../static/layui/layui.js" th:src="@{/layui/layui.js}"></script>
 <script>
     //JavaScript代码区域
-    layui.use('element', function(){
+    layui.use(['element','form','jquery'], function(){
         var element = layui.element;
+        var form = layui.form;
+        var $ = layui.jquery;
+
+        // $('select[name=levelC1]').change(function() {
+        //     alert('change');
+        // });
+        form.on('select(levelC1)', function(event) {
+            //获取当前选中的值;
+            var parentId = event.value;
+            if (parentId == '' || parentId == null) {return;}
+
+            $.ajax({
+                url: '/category/queryLevelByParentId/'+parentId,
+                type: 'post',
+                success: function(data) {
+                    //修改数据，重新渲染
+                    form.render('select');
+                }
+            });
+        });
 
     });
 </script>

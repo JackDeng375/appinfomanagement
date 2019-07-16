@@ -2,35 +2,81 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jack.appinfo.mapper.AppInfoMapper">
   <resultMap id="BaseResultMap" type="com.jack.appinfo.pojo.AppInfo">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="softwareName" jdbcType="VARCHAR" property="softwareName" />
-    <result column="APKName" jdbcType="VARCHAR" property="APKName" />
-    <result column="supportROM" jdbcType="VARCHAR" property="supportROM" />
-    <result column="interfaceLanguage" jdbcType="VARCHAR" property="interfaceLanguage" />
-    <result column="softwareSize" jdbcType="DECIMAL" property="softwareSize" />
-    <result column="updateDate" jdbcType="DATE" property="updateDate" />
-    <result column="devId" jdbcType="BIGINT" property="devId" />
-    <result column="appInfo" jdbcType="VARCHAR" property="appInfo" />
-    <result column="status" jdbcType="BIGINT" property="status" />
-    <result column="onSaleDate" jdbcType="TIMESTAMP" property="onSaleDate" />
-    <result column="offSaleDate" jdbcType="TIMESTAMP" property="offSaleDate" />
-    <result column="flatformId" jdbcType="BIGINT" property="flatformId" />
-    <result column="categoryLevel3" jdbcType="BIGINT" property="categoryLevel3" />
-    <result column="downloads" jdbcType="BIGINT" property="downloads" />
-    <result column="createdBy" jdbcType="BIGINT" property="createdBy" />
-    <result column="creationDate" jdbcType="TIMESTAMP" property="creationDate" />
-    <result column="modifyBy" jdbcType="BIGINT" property="modifyBy" />
-    <result column="modifyDate" jdbcType="TIMESTAMP" property="modifyDate" />
-    <result column="categoryLevel1" jdbcType="BIGINT" property="categoryLevel1" />
-    <result column="categoryLevel2" jdbcType="BIGINT" property="categoryLevel2" />
-    <result column="logoPicPath" jdbcType="VARCHAR" property="logoPicPath" />
-    <result column="logoLocPath" jdbcType="VARCHAR" property="logoLocPath" />
-    <result column="versionId" jdbcType="BIGINT" property="versionId" />
+    <id column="appId" property="id" />
+    <result column="softwareName" property="softwareName" />
+    <result column="APKName" property="APKName" />
+    <result column="supportROM" property="supportROM" />
+    <result column="interfaceLanguage" property="interfaceLanguage" />
+    <result column="softwareSize" property="softwareSize" />
+    <result column="updateDate" property="updateDate" />
+    <result column="devId" property="devId" />
+    <result column="appInfo" property="appInfo" />
+    <result column="status" property="status" />
+    <result column="onSaleDate" property="onSaleDate" />
+    <result column="offSaleDate" property="offSaleDate" />
+    <result column="flatformId" property="flatformId" />
+    <!--<result column="categoryLevel3" property="categoryLevel3" />-->
+    <result column="downloads" property="downloads" />
+    <result column="createdBy" property="createdBy" />
+    <result column="creationDate" property="creationDate" />
+    <result column="modifyBy" property="modifyBy" />
+    <result column="modifyDate" property="modifyDate" />
+    <!--<result column="categoryLevel1" property="categoryLevel1" />-->
+    <!--<result column="categoryLevel2" property="categoryLevel2" />-->
+    <result column="logoPicPath" property="logoPicPath" />
+    <result column="logoLocPath" property="logoLocPath" />
+    <result column="versionId" property="versionId" />
   </resultMap>
+
+  <resultMap id="appInfoWith" type="com.jack.appinfo.pojo.AppInfo" extends="BaseResultMap">
+    <!--封装最新的APP版本对象-->
+    <association property="newAppVersion" javaType="com.jack.appinfo.pojo.AppVersion" >
+        <id property="id" column="versionId" />
+        <result property="versionNo" column="versionNo" />
+    </association>
+    <association property="categoryLevel1" javaType="com.jack.appinfo.pojo.AppCategory">
+        <result property="categoryName" column="categoryLevel1Name" />
+    </association>
+    <association property="categoryLevel2" javaType="com.jack.appinfo.pojo.AppCategory">
+        <result property="categoryName" column="categoryLevel2Name" />
+    </association>
+    <association property="categoryLevel3" javaType="com.jack.appinfo.pojo.AppCategory">
+        <result property="categoryName" column="categoryLevel3Name" />
+    </association>
+  </resultMap>
+
   <sql id="Base_Column_List">
     id, softwareName, APKName, supportROM, interfaceLanguage, softwareSize, updateDate, 
     devId, appInfo, status, onSaleDate, offSaleDate, flatformId, categoryLevel3, downloads, 
     createdBy, creationDate, modifyBy, modifyDate, categoryLevel1, categoryLevel2, logoPicPath, 
     logoLocPath, versionId
   </sql>
+
+
+  <select id="queryAppByDevId" parameterType="long" resultMap="appInfoWith">
+     SELECT
+          t1.id appId,
+          t1.softwareName,
+          t1.APKName,
+          t1.softwareSize,
+          t1.flatformId,
+          t1.`status`,
+          t1.downloads,
+          t1.versionId,
+          tc1.categoryName AS categoryLevel1Name,
+          tc2.categoryName AS categoryLevel2Name,
+          tc3.categoryName AS categoryLevel3Name,
+          t2.versionNo
+    FROM
+          app_info t1
+          LEFT JOIN app_category tc1 ON t1.categoryLevel1 = tc1.id
+          LEFT JOIN app_category tc2 ON t1.categoryLevel2 = tc2.id
+          LEFT JOIN app_category tc3 ON t1.categoryLevel3 = tc3.id
+          LEFT JOIN app_version t2 ON t1.versionId = t2.id,
+          dev_user t3
+    WHERE
+          t1.devId = t3.id
+          AND t3.id = #{devId}
+  </select>
+
 </mapper>

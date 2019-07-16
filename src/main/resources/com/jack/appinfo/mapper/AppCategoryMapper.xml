@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jack.appinfo.mapper.AppCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.jack.appinfo.pojo.AppCategory">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="categoryCode" jdbcType="VARCHAR" property="categoryCode" />
+    <result column="categoryName" jdbcType="VARCHAR" property="categoryName" />
+    <result column="parentId" jdbcType="BIGINT" property="parentId" />
+    <result column="createdBy" jdbcType="BIGINT" property="createdBy" />
+    <result column="creationTime" jdbcType="TIMESTAMP" property="creationTime" />
+    <result column="modifyBy" jdbcType="BIGINT" property="modifyBy" />
+    <result column="modifyDate" jdbcType="TIMESTAMP" property="modifyDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, categoryCode, categoryName, parentId, createdBy, creationTime, modifyBy, modifyDate
+  </sql>
+
+  <select id="getMenuByParentId" parameterType="integer" resultType="AppCategory">
+    SELECT
+     id,categoryCode,categoryName,parentId
+    FROM app_category
+    <if test="parentId == null">
+      where parentId is null
+    </if>
+    <if test="parentId != null and parentId != ''">
+      where  parentId = #{parentId}
+    </if>
+  </select>
+</mapper>

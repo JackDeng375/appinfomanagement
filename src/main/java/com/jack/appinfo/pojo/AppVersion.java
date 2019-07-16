@@ -5,7 +5,9 @@ import lombok.*;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @ToString
@@ -14,18 +16,23 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "backend_user")
-public class BackendUser  implements Serializable {
-
+@Table(name = "app_version")
+public class AppVersion implements Serializable {
     @Id
     private Long id;
 
     @Column
-    private String userCode;
+    private Long appId;
     @Column
-    private String userName;
+    private String versionNo;
     @Column
-    private Long userType;
+    private String versionInfo;
+    @Column
+    private Long publishStatus;
+    @Column
+    private String downloadLink;
+    @Column
+    private BigDecimal versionSize;
     @Column
     private Long createdBy;
     @Column
@@ -35,7 +42,10 @@ public class BackendUser  implements Serializable {
     @Column
     private Date modifyDate;
     @Column
-    private String userPassword;
+    private String apkLocPath;
+    @Column
+    private String apkFileName;
 
-
+    @Transient
+    private AppInfo appInfo;
 }
